@@ -66,6 +66,6 @@ function getPicW(x1, y1, x2, y2,name) {
 // getPicH(142,633,160,660,"游戏_主线对话")//关卡坐标265,920,307,935
 //getPicH(358,582,,"游戏_UI血条")
 let re
-let pic = "模拟器测试"
-re = getPicH(89,71,161,155,pic)
+let pic = "游戏_主线对话调律技能点击二"
+re = getPicH(247,869,290,886,pic)
 log("\n" +"\n" +"\n" +"0.96|"+pic+"|"+re[0].toString()+","+re[1].toString()+","+re[2].toString()+","+re[3].toString()+"\n" +"\n" +"\n")

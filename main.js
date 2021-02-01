@@ -32,8 +32,7 @@ let apkPath = "./auto/"
 let readpath = sdPath //写脚本 "/sdcard/pictures/auto/" APK "./auto/"
 //-------------读取配置------------
 //------------------测试-----------
-log(findPicAll("模拟器测试"))
-exit()
+
 //upLV()
 //---------------------测试-----------
 //--------------------框架函数_链表------------------
@@ -368,12 +367,6 @@ function LinkList() {
 //     toast("连接中控失败")
 //     exit()
 // }
-//递交当前模拟器脚本信息并获取中控台服务
-function seedGet(p){
-    let ser = ip + "/seedget"
-    let req = visitPost(ser,p)
-
-}
 
 //获取名字
 function getName() {
@@ -410,7 +403,7 @@ function ocr() {
 //关闭模拟器 todo
 function closeM() {
     let getnames = ip + "/end"
-    let req = visitPost(getnames, {})
+    let req = visitPost(getnames, {"sy":num})
     return req.name
 }
 //递交账号密码
@@ -427,8 +420,10 @@ function visitPost(url, body) {
 
 //---------------------通讯----------------
 //--------------------框架函数--------------
-
-function getId_no() {
+/**
+ * @param {string}  获取身份证号码
+ */
+function GetIDCard() {
     var coefficientArray = ["7", "9", "10", "5", "8", "4", "2", "1", "6", "3", "7", "9", "10", "5", "8", "4",
         "2"
     ]; // 加权因子
@@ -436,7 +431,7 @@ function getId_no() {
 
 
     //添加 新的住址信息 https://wenku.baidu.com/view/a3576ab13968011ca30091ec.html 即可随机生成更多
-    var address = "430681"; // 住址 
+    var address = "430681"; // 住址 编码
 
 
 
@@ -454,71 +449,15 @@ function getId_no() {
 
     return id_no_String;
 }
-
-
-function GetIDCard() {
-    let address = random(999999, 100000);
-    let date = new Date();
-    let yearfull = date.getFullYear();
-    let y = random(yearfull + 1, yearfull - 70);
-    let m = random(13, 1);
-    let d = random(30, 1);
-    let z = random(9999, 1000);
-    if (m < 10) {
-        m = '0' + m;
-    }
-    if (d < 10) {
-        d = '0' + d;
-    }
-    let data = address + '' + y + '' + m + '' + d + '' + z + ''
-    /*将身份证号码前面的17位数分别乘以不同的系数。从第一位到第十七位的系数分别为：7－9－10－5－8－4－2－1－6－3－7－9－10－5－8－4－2。
-将这17位数字和系数相乘的结果相加。
-用加出来和除以11，取余数。
-余数只可能有0－1－2－3－4－5－6－7－8－9－10这11个数字。其分别对应的最后一位身份证的号码为1－0－X－9－8－7－6－5－4－3－2。
-通过上面计算得知如果余数是3，第18位的校验码就是9。如果余数是2那么对应的校验码就是X，X实际是罗马数字10。 */
-    let v = data.substring(0, 17)
-    let last, he = 0
-    for (let index = 0; index < v.length; index++) {
-        if (index == 0) he = parseInt(v[index]) * 7 + he
-        if (index == 1) he = parseInt(v[index]) * 9 + he
-        if (index == 2) he = parseInt(v[index]) * 10 + he
-        if (index == 3) he = parseInt(v[index]) * 5 + he
-        if (index == 4) he = parseInt(v[index]) * 8 + he
-        if (index == 5) he = parseInt(v[index]) * 4 + he
-        if (index == 6) he = parseInt(v[index]) * 2 + he
-        if (index == 7) he = parseInt(v[index]) * 1 + he
-        if (index == 8) he = parseInt(v[index]) * 6 + he
-        if (index == 9) he = parseInt(v[index]) * 3 + he
-        if (index == 10) he = parseInt(v[index]) * 7 + he
-        if (index == 11) he = parseInt(v[index]) * 9 + he
-        if (index == 12) he = parseInt(v[index]) * 10 + he
-        if (index == 13) he = parseInt(v[index]) * 5 + he
-        if (index == 14) he = parseInt(v[index]) * 8 + he
-        if (index == 15) he = parseInt(v[index]) * 4 + he
-        if (index == 16) he = parseInt(v[index]) * 2 + he
-    }
-    he = he % 11
-    if (he == 0) last = "1"
-    if (he == 1) last = "0"
-    if (he == 2) last = "X"
-    if (he == 3) last = "9"
-    if (he == 4) last = "8"
-    if (he == 5) last = "7"
-    if (he == 6) last = "6"
-    if (he == 7) last = "5"
-    if (he == 8) last = "4"
-    if (he == 9) last = "3"
-    if (he == 10) last = "2"
-    return v + last
-}
-
-
+/**
+ * @param {string}  返回名字和身份证号码
+ */
 function getNameNumberInInter() {
     let re = ["", ""]
     let nameHtml = http.get("https://www.qmsjmfb.com/");
     if (nameHtml.statusCode == 200) {
         re[0] = nameHtml.body.string().substring(nameHtml.body.string().indexOf("<li>") + 4, nameHtml.body.string().indexOf("</li>"))
-        re[1] = getId_no()
+        re[1] = GetIDCard()
         return re
     }
     return false
@@ -555,6 +494,9 @@ function downup(p) {
     sleep(500)
     return true
 }
+/**
+ * @param {string} findPicALL辅助函数
+ */
 function getArg(p) {
     let points = p.split(",")
     let findpicArg = []
@@ -569,7 +511,9 @@ function getArg(p) {
     }
     return findpicArg
 }
-
+/**
+ * @param {string} findPicALL辅助函数
+ */
 function getStringArg(p) {
     let re = [] //[0]是否区域找到 true fals [1] 精度 [2] 图片 [3] 找图区域数组
     let f
@@ -969,92 +913,15 @@ function showPic(p) {
     app.viewFile(templ)
     templ.recycle()
 }
-/**
- * @param {string} param1 -每隔1秒找文本为p值的控件直到出现 默认1秒 成功 true 失败false
- */
-function findText(p, times) {
-    if (times === undefined) {
-        times = 1000;
-    }
-    if (text(p).findOne(times) == null) {
-        return false
-    }
-    else {
-        return true
-    }
-}
-/**
- * @param {string} param1 -每隔1秒找文本为p值的控件直到出现并点击 默认1秒 成功 true 失败false
- */
-function clickText(p, times) {
-    if (times === undefined) {
-        times = 1000;
-    }
-    let clicker = text(p).findOne(times)
-    if (clicker != null) {
-        clicker.click()
-        return true
-    }
-    else {
-        return false
-    }
-}
-function findId(p, times) {
-    if (times === undefined) {
-        times = 1000;
-    }
-    if (id(p).findOne(times) == null) {
-        return false
-    }
-    else {
-        return true
-    }
-}
-function clickId(p, times) {
-    if (times === undefined) {
-        times = 1000;
-    }
-    let clicker = id(p).findOne(times)
-    if (clicker != null) {
-        clicker.click()
-        return true
-    }
-    else {
-        return false
-    }
-}
-function findDesc(p, times) {
-    if (times === undefined) {
-        times = 1000;
-    }
-    if (desc(p).findOne(times) == null) {
-        return false
-    }
-    else {
-        return true
-    }
-}
-function clickDesc(p, times) {
-    if (times === undefined) {
-        times = 1000;
-    }
-    let clicker = desc(p).findOne(times)
-    if (clicker != null) {
-        clicker.click()
-        return true
-    }
-    else {
-        return false
-    }
-
-}
-function clickRa(x, y) {
-    ra.tap(x, y)
-    sleep(100)
-}
+/** 
+* @param {string} 关闭应用 有ROOT权限的
+*/
 function killApp(packageName) {
     shell('am force-stop ' + packageName, true);
 };
+/** 
+* @param {string} 关闭应用 无ROOT权限的
+*/
 function killAppTwo(packageName) {
     var name = getPackageName(packageName);
     if (!name) {
@@ -1079,20 +946,19 @@ function killAppTwo(packageName) {
     }
 }
 /**
- * @param {string} 超时操作与记录相关
+ * @param {string} 超时操作与记录相关 还有负责与中控通信 检索任务
  */
 function outTime() {
     log("超时检测启动")
     //开始计时
     do {
+
         seedTime = seedTime +1
         if(seedTime == 2){
             seedTime = 0
             http.postJson(ip + "/seedget",{"tou":"实时脚本状态","脚本任务":"绯红自抽",sy:num,states:state+":"+seedmsg+time.toString()})
         }
 
-        
-        
         //判断当前脚本状态 设置超时标签
         if (state == "登录") outtime = 120
         if (state == "主线") outtime = 180
@@ -1111,7 +977,7 @@ function outTime() {
 }
 //-------------------游戏脚本方法---------------------
 /**
- * @param {string} param1 -实名认证
+ * @param {string}  -实名认证
  * 
  */
 function readyname() {
@@ -1124,7 +990,7 @@ function readyname() {
     return false
 }
 /**
- * @param {string} param1 -注册账号并发送服务器记录 创建"/sdcard/pictures/zhanghao.txt" 记录账号密码进度第一行账号第二行密码第三行进度
+ * @param {string} -注册账号并发送服务器记录 创建"/sdcard/pictures/zhanghao.txt" 记录账号密码进度第一行账号第二行密码第三行进度
  */
 function register() {
     if (funislog) log("register")
@@ -1165,6 +1031,9 @@ function register() {
 
     }
 }
+/**
+ * @param {string} 登录
+ */
 function login() {
     if (funislog) log("login")
     //开始登录
@@ -1189,6 +1058,9 @@ function login() {
     return false
 
 }
+/**
+ * @param{string} 角色名字
+ */
 function gameName() {
     if (funislog) log("gameName")
     findPicAllClickUntilAppears(5, "游戏_UI吾名为")//"游戏_UI回忆您的名字" 262 773
@@ -1353,13 +1225,21 @@ function zhuxianupLV(p){
     return true
 }
 function 关闭游戏() {
-    killAppTwo("com.blackwasp")
+    killAppTwo(gamepacketname)
     init()
     if (threadOutTime) threadOutTime.interrupt()
     lock.lock()
-    state = "登录"
+    setState("登录_启动游戏")
     lock.unlock()
 }
+function setState(p){
+    lock.lock()
+    state = p
+    lock.unlock()
+}
+/**
+ * @param{string} 载入主线图色数据
+ */
 function loadData() {
     zhuxian.appendAll(["游戏_BTN跳过剧情打钩", ["游戏_UI回忆你的名字", gameName], [["游戏_对话等到你","0.95|游戏_主线1-1白点|96,707,177,796"], 128, 740], "游戏_主线点击角色",
         ["游戏_主线对话SP值", 276, 831], [["游戏_主线对话下一关","0.95|游戏_主线1-2白点|249,706,283,745"], 266, 727],
@@ -1381,13 +1261,14 @@ function loadData() {
         }]
     ])
 }
+function 日常(){
+}
 function 主线() {
     if (!zhuxianjindu) zhuxian.run()
-    findPicAllClick("游戏_主线冒险", "游戏_主线开始战斗", "游戏_BTN跳过", "游戏_主线对话", "游戏_BTN点击屏幕继续")
-    if (findPicAllClick("游戏_点击空白区域关闭")) fighting = false
-    findPicAllClick("游戏_主线对话音符", 226, 903)
-    findPicAllClick("游戏_分享", 270, 839)
-
+    if(findPicAll("战斗界面")) {
+        saveState = state
+        setState("主线战斗")
+    }
     if (zhuxianjindu) {
         if (getMail()) {
             files.remove("/sdcard/pictures/zhanghao.txt")
@@ -1397,64 +1278,89 @@ function 主线() {
             lock.unlock()
         }
     }
-    findPicAll("游戏_BTN开始战斗", "游戏_BTN冒险", fight)
-    if ((state.indexOf("关卡") || findPicAll("游戏_BTN主页冒险", "游戏_BTN主线") && !zhuxianjindu)) setGunkaLv();
-    //实现关卡点击 
-    //关卡图片数组 从 1-15 到 1-1
-    //找到关卡 设置关卡标签guanka 
-
 }
+function 战斗(){
+    if(!findPicAll("战斗界面")) state = saveState
+}
+/**
+ * @param {string} 启动游戏 更新 等在这里处理 内置2个图片 1 "启动游戏_更新" "启动游戏_成功" 改变state = "登录_创建账号"
+ */
+function 启动游戏(){
+    if (currentPackage() != gamepacketname) app.launchApp(GAMENAME);
+    findPicAllClick("启动游戏_更新")
+    if(findPicAll("启动游戏_成功")) setState ("登录_创建账号")
+}
+/**
+ * @param {string} 创建账号 等在这里处理  改变state = "登录_登录账号"
+ */
+function 创建账号(){
+    //判断模拟器内是否有账号文本
+    if (!files.exists("/sdcard/pictures/zhanghao.txt")) {//如果有文件 账号已注册
+        //没有则创建账号
+        
+        setState("登录_登录账号")
+    }else{
+        //有则改变状态
+        setState("登录_登录账号")
+    }
+}
+/**
+ * @param {string} 登录账号 封号判断 等在这里处理 "登录_登录成功" "登录_封号" 改变state = "登录_选区"
+ */
+function 登录账号(){
+    if(findPicAllClick("登录_登录成功")){
+        sleep(3000)
+        if(findPicAll("登录_封号")){
+            //向服务器发送封号信息 并删除本地账号文件
+            
+            files.remove("/sdcard/pictures/zhanghao.txt")
+            return
+        }
+        setState( "登录_选区")
+    }
+}
+/**
+ * @param {string} 选区 等在这里处理  "登录_选区点击" 改变state = "登录_创建角色"
+ */
+function 选区(){
+    if(!files.exists("/sdcard/pictures/xuanqu.txt")){
+        //没有文件不用选取
+        setState("登录_创建角色")
+    }else{
+        //开始选区
+
+        //操作完成 找到选区点击
+        if(findPicAllClick("登录_选区点击")){
+            setState( "登录_创建角色")
+        }
+    }
+}
+/**
+ * @param {string} 创建角色操作 取名字 等在这里处理  "登录_创建角色点击" "登录_选择角色界面" 改变state = "登录_选择角色进入游戏" 或者可以创建完成直接进入游戏则 state = "主线"
+ */
+function 创建角色(){
+     //或者 找到选择角色界面则不用创建
+    if(findPicAllClick("登录_创建角色点击")) setState( "登录_选择角色进入游戏")
+    if(findPicAll("登录_选择角色界面")) setState( "登录_选择角色进入游戏")
+}
+/**
+ * @param {string} 选择角色进入游戏  等在这里处理 "登录_进入游戏"  改变state = "主线"
+ */
+function 选择角色进入游戏(){
+    //或者 找到选择角色界面则不用创建
+    if(findPicAllClick("登录_进入游戏")) setState("主线")
+}
+/**
+ * @param {string} 登录_启动游戏 => 登录_创建账号 =>登录_登录账号 => 登录_选区 =>登录_创建角色=>登录_选择角色进入游戏 改变state
+ *                 登录_启动游戏 => 登录_登录账号 => 登录_选区 =>登录_选择角色进入游戏 改变state  
+ */
 function 登录() {
-    if (currentPackage() != "com.blackwasp") app.launchApp("绯红之境");
-    do {
-        if (text("允许").findOne(1000)) text("允许").findOne(1000).click()
-        sleep(2000)
-    } while (text("允许").findOne(1000));
-
-    findPicAllClick("登录_公告确定")
-    //登录 判断 读取手机文件是否有zhanghao.txt 没有 则 注册 有 则判断该账号是否完成指定目标 第三行是否为1
-    if (denglu) {
-        findPicAllClickUntilAppears("登录_点击进入")
-        lock.lock()
-        time = 0
-        state = "主线"
-        lock.unlock()
-        return
-
-    }
-    //如果出现公告 证明已经登录了 不用注册和登录
-
-    if (files.exists("/sdcard/pictures/zhanghao.txt")) {//如果有文件 账号已注册
-        let zhanghaoText = files.open("/sdcard/pictures/zhanghao.txt", "r")
-        zhanghao = zhanghaoText.readline()
-        mima = zhanghaoText.readline()
-        if (zhanghaoText.readline() == "1") {//如果已经完成
-            zhanghaoText.close()
-            if (files.remove("/sdcard/pictures/zhanghao.txt")) {
-                if (register()) {//重新注册//将账号密码发送到控制台并存到数据库
-                    sleep(1500)
-                    if (findPicAll("登录_切换账号")) {
-                        denglu = readyname()
-                        sleep(5000)
-                    }
-
-                }
-            }
-        } else {//没完成
-            zhanghaoText.close()
-            denglu = login()
-            sleep(5000)
-        }
-    } else {
-        if (register()) {//重新注册//将账号密码发送到控制台并存到数据库
-            sleep(1500)
-            if (findPicAll("登录_切换账号")) {
-                denglu = readyname()
-                sleep(5000)
-            }
-        }
-    }
-
+    if(state.indexOf("启动游戏") != -1) 启动游戏()
+    if(state.indexOf("创建账号") != -1) 创建账号()
+    if(state.indexOf("登录账号") != -1) 登录账号()
+    if(state.indexOf("选区") != -1) 选区()
+    if(state.indexOf("创建角色") != -1) 创建角色()
+    if(state.indexOf("选择角色进入游戏") != -1) 选择角色进入游戏()
 }
 /**
  * @param {string} 脚本数据初始化
@@ -1468,13 +1374,22 @@ function init() {
 }
 //-------------------游戏脚本方法---------------------
 //--------------------自抽号脚本主体--------------
+//这里开始设置游戏内容
 let islog = false
 let funislog = false
+//游戏包名 用于检索当前应用是否是该游戏
+let gamepacketname = ""
+//游戏名称 用于启动
+let GAMENAME = ""
 //练号 流程
-let state = "登录"
+let state = "登录_启动游戏"
+let saveState = ""
 let denglu = false
 let fighting = false
 let zhuxianjindu = false
+/**
+ * @param {string} 超时线程ID 
+ */
 let threadOutTime, threadstart = false
 let seedmsg = ""
 let lock = threads.lock(); //超时创建锁
@@ -1489,40 +1404,10 @@ do {
         threadstart = true
         threadOutTime = threads.start(outTime)
     }
-    if (state == "登录") 登录()
+    if (state.indexOf("登录") != -1) 登录()
     if (state.indexOf("主线") != -1) 主线()
+    if(state.indexOf("日常") != -1) 日常()
+    if(state.indexOf("战斗") != -1) 战斗()
     if (state == "关闭游戏") 关闭游戏()
     sleep(100)
 } while (true);
-
-//启动线程
-
-
-
-
-//启动游戏 包名启动launch("com.tencent.mm"); 应用名启动launchApp("Auto.js");
-//判断应用是否启动
-
-
-//获取权限直到没有允许文本
-//启动游戏----更新----登陆游戏
-
-//注册(获取数据库账号) 如果是从中控数据库拿取账号 此处不用注册
-//手机注册流程
-//从服务器获取手机号码 
-
-//登录
-
-//主线
-
-
-
-
-
-
-
-
-//抽卡
-
-//记录获取并发送至中控数据库
-
