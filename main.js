@@ -9,6 +9,7 @@ threads.start(function () {
         beginBtn.click();
     }
 });
+//requestScreenCapture(false) 横屏截图 requestScreenCapture(true) 竖屏截图
 if (!requestScreenCapture()) {
     toast("请求截图失败");
     exit();
